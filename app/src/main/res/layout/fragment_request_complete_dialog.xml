@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    
+    <TableLayout 
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:stretchColumns="*"
+        android:paddingEnd="10dp"
+        android:paddingStart="10dp"
+        tools:context=".RequestCrudFragment"
+        android:focusableInTouchMode="true">
+    
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp">
+    
+            <TextView
+                android:layout_marginRight="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="@string/date"
+                android:id="@+id/date_label" />
+    
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/date_show_label" />
+    
+        </TableRow>
+    
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp">
+    
+            <TextView
+                android:layout_marginRight="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="@string/address"
+                android:id="@+id/address_label" />
+    
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/address_show_label"
+                android:width="0dp"
+                android:padding="5dp"/>
+        </TableRow>
+    
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp">
+    
+            <TextView
+                android:layout_marginRight="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="@string/phone_number"
+                android:id="@+id/phone_number_label" />
+    
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/phone_number_show_label" />
+        </TableRow>
+    
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp">
+    
+            <TextView
+                android:layout_marginRight="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="@string/request_text"
+                android:id="@+id/request_text_label" />
+    
+            <TextView
+                android:padding="5dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:width="0dp"
+                android:id="@+id/request_text_show_label" />
+        </TableRow>
+        
+        <RadioGroup 
+            android:id="@+id/request_completion_options_group"
+            android:padding="10dp"
+            android:orientation="vertical">
+            
+            <RadioButton
+                android:id="@+id/request_completed_radio"
+                android:gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/request_completed"/>
+            
+            <RadioButton
+                android:id="@+id/request_denied_radio"
+                android:gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/request_denied"/>
+    
+            <EditText
+                android:id="@+id/denied_comment_edit"
+                android:gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/comment"
+                android:inputType="textMultiLine"
+                android:visibility="gone"/>
+    
+            <RadioButton
+                android:id="@+id/request_moved_radio"
+                android:gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/request_moved"/>
+    
+            <EditText
+                android:id="@+id/move_to_date_edit"
+                android:gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/move_to_date"
+                android:inputType="date"
+                android:visibility="gone"/>
+    
+            <EditText
+                android:id="@+id/move_comment_edit"
+                android:gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/comment"
+                android:inputType="textCapSentences"
+                android:visibility="gone"/>
+            
+        </RadioGroup>
+    
+    </TableLayout>
+</ScrollView>

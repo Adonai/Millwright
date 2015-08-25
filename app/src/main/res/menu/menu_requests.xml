@@ -1,0 +1,12 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto"
+      xmlns:tools="http://schemas.android.com/tools"
+      tools:context=".RequestsActivityFragment"
+      tools:ignore="AlwaysShowAction">
+    
+    <item android:id="@+id/action_add_request"
+          android:title="@string/add_request"
+          android:titleCondensed="@string/add"
+          android:icon="@android:drawable/ic_menu_add"
+          app:showAsAction="always" />
+</menu>

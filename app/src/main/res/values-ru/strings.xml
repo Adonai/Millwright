@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Заявки на монтаж</string>
+    <string name="action_settings">Настройки</string>
+    <string name="add">Добавить</string>
+    <string name="add_request">Добавить заявку</string>
+    <string name="address">Адрес</string>
+    <string name="close_request">Закрыть заявку</string>
+    <string name="comment">Комментарий</string>
+    <string name="create">Создать</string>
+    <string name="create_new_request">Создать новую заявку</string>
+    <string name="date">Дата</string>
+    <string name="denied">Отказ</string>
+    <string name="done">Выполнено</string>
+    <string name="edit_request">Редактирование заявку</string>
+    <string name="operator_phone_number">Номер оператора</string>
+    <string name="operator_phone_number_summary">Номер, входящие SMS от которого обрабатываются программой и на которых отсылается уведомление о закрытии заявки</string>
+    <string name="phone_number">Тел.</string>
+    <string name="request_completed">Заявка выполнена</string>
+    <string name="request_denied">Отказ по заявке</string>
+    <string name="request_moved">Заявка перенесена</string>
+    <string name="request_text">Текст заявки</string>
+    <string name="update">Обновить</string>
+    <string name="sms_sent_success">SMS отправлено успешно</string>
+    <string name="generic_failure">Общий сбой</string>
+    <string name="no_service">Нет сети</string>
+    <string name="null_message">Нет сообщения</string>
+    <string name="radio_off">Антенна отключена</string>
+    <string name="sms_deliver_success">SMS доставлено успешно</string>
+    <string name="result_canceled">SMS доставка отменена</string>
+    <string name="main_settings">Основные настройки</string>
+    <string name="move_to_date">Перенести на дату</string>
+    <string name="invalid_operator_number">Некорректный номер оператора, пожалуйста, исправьте в настройках!</string>
+</resources>
