@@ -90,6 +90,19 @@ public class RequestsActivityFragment extends Fragment {
     }
 
     @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        
+        MenuItem smsOption = menu.findItem(R.id.notify_on_sms);
+        boolean shouldOpen = mPrefs.getBoolean(Constants.OPEN_ON_SMS_KEY, true);
+        smsOption.setChecked(shouldOpen);
+
+        MenuItem soundOption = menu.findItem(R.id.notify_with_sound);
+        boolean shouldRing = mPrefs.getBoolean(Constants.RING_ON_SMS_KEY, false);
+        soundOption.setChecked(shouldRing);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_add_request:

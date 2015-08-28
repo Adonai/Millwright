@@ -67,6 +67,10 @@ public class RequestsActivity extends AppCompatActivity {
         registerReceiver(mSentReceiver, new IntentFilter(Constants.SENT));
         //--- When the SMS has been delivered. ---
         registerReceiver(mDeliveryReceiver, new IntentFilter(Constants.DELIVERED));
+
+        // if open-on-sms is false but activity is present, we should refresh our list on start
+        Fragment requestList = getSupportFragmentManager().findFragmentById(R.id.requests_fragment);
+        requestList.getLoaderManager().getLoader(Constants.Loaders.REQUEST_LOADER.ordinal()).onContentChanged();
     }
 
     @Override
