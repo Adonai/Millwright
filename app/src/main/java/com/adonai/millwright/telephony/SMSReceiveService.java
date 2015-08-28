@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.app.Service;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.AudioManager;
+import android.media.ToneGenerator;
 import android.os.Handler;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
@@ -11,16 +13,20 @@ import android.telephony.PhoneNumberUtils;
 
 import com.adonai.millwright.Constants;
 import com.adonai.millwright.RequestsActivity;
+import com.adonai.millwright.db.DbProvider;
+import com.adonai.millwright.db.PersistManager;
+import com.adonai.millwright.db.entities.Request;
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
 
+import java.util.Calendar;
 import java.util.Locale;
 
 public class SMSReceiveService extends Service {
 
     private SharedPreferences mPreferences;
-
+    private ToneGenerator mToneGenerator;
     private Handler mHandler;
     
     @Override
@@ -37,13 +43,21 @@ public class SMSReceiveService extends Service {
     public void onCreate() {
         super.onCreate();
         mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        mToneGenerator = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mToneGenerator.release();
+    }
 
     @SuppressWarnings("deprecation")
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent != null && intent.hasExtra("number")) {
+            boolean shouldPlaySound = mPreferences.getBoolean(Constants.RING_ON_SMS_KEY, false);
+            boolean shouldOpen = mPreferences.getBoolean(Constants.OPEN_ON_SMS_KEY, true);
             String smsText = intent.getStringExtra("text");
 
             // phone must match the one from settings
@@ -56,15 +70,27 @@ public class SMSReceiveService extends Service {
             if(!PhoneNumberUtils.compare(this, normalizedSmsNumber, normalizedOperatorNumber))
                 return START_NOT_STICKY;
 
-            // open activity
-            Intent starter = new Intent(this, RequestsActivity.class);
-            starter.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    .putExtra("number", smsNumber)
-                    .putExtra("text", smsText);
-            startActivity(starter);
-
+            // persist obtained request info
+            addRequestEntry(smsText);
+            
+            if(shouldPlaySound) { // play notify sound
+                mToneGenerator.startTone(ToneGenerator.TONE_CDMA_ABBR_REORDER, 250);
+            }
+            
+            if(shouldOpen) { // open activity
+                Intent starter = new Intent(this, RequestsActivity.class);
+                starter.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(starter);
+            }
         }
         return START_NOT_STICKY;
+    }
+    
+    public void addRequestEntry(String smsText) {
+        PersistManager manager = DbProvider.getTempHelper(this);
+        Request toPersist = Request.fromSms(smsText);
+        manager.getRequestDao().create(toPersist);
+        DbProvider.releaseTempHelper(); // it's ref-counted thus will not close if activity uses it...
     }
 
     /**
@@ -91,7 +117,7 @@ public class SMSReceiveService extends Service {
             if (util.isValidNumber(pn)) {
                 result = util.format(pn, PhoneNumberUtil.PhoneNumberFormat.E164);
             }
-        } catch (NumberParseException e) {
+        } catch (NumberParseException ignored) {
         }
         return result;
     }

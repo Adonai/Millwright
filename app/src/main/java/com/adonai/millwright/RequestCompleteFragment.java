@@ -14,6 +14,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.telephony.PhoneNumberUtils;
 import android.telephony.SmsManager;
+import android.text.method.LinkMovementMethod;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -53,9 +54,8 @@ public class RequestCompleteFragment extends DialogFragment implements DialogInt
     private TextView mPhoneNumberText;
     
     private RadioGroup mRequestCompletionOptions;
-    private EditText mDeniedCommentEdit;
+    private EditText mCommentEdit;
     private DatePickerListener mMovedToDatePicker;
-    private EditText mMovedCommentEdit;
     
     private Button mOkButton;
     
@@ -85,9 +85,8 @@ public class RequestCompleteFragment extends DialogFragment implements DialogInt
         mRequestCustomText = (TextView) root.findViewById(R.id.request_text_show_label);
         
         mRequestCompletionOptions = (RadioGroup) root.findViewById(R.id.request_completion_options_group);
-        mDeniedCommentEdit = (EditText) root.findViewById(R.id.denied_comment_edit);
+        mCommentEdit = (EditText) root.findViewById(R.id.comment_edit);
         mMovedToDatePicker = DatePickerListener.wrap((EditText) root.findViewById(R.id.move_to_date_edit));
-        mMovedCommentEdit = (EditText) root.findViewById(R.id.move_comment_edit);
 
         mRequest = DbProvider.getHelper().getRequestDao().queryForId(getArguments().getLong(REQUEST_ANCHOR));
         mDateText.setText(DatePickerListener.VIEW_DATE_FORMAT.format(mRequest.getDate()));
@@ -133,23 +132,16 @@ public class RequestCompleteFragment extends DialogFragment implements DialogInt
     @Override
     public void onCheckedChanged(RadioGroup group, int checkedId) {
         mOkButton.setEnabled(true);
-        mDeniedCommentEdit.setVisibility(View.GONE);
         mMovedToDatePicker.getWrapped().setVisibility(View.GONE);
-        mMovedCommentEdit.setVisibility(View.GONE);
         
         switch (checkedId) {
-            case R.id.request_denied_radio:
-                mDeniedCommentEdit.setVisibility(View.VISIBLE);
-                return;
             case R.id.request_moved_radio:
                 mMovedToDatePicker.getWrapped().setVisibility(View.VISIBLE);
-                mMovedCommentEdit.setVisibility(View.VISIBLE);
-                return;
         }
     }
 
     private void sendCompletionSms(RequestStatus status) throws InvalidPropertiesFormatException {
-        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale.getDefault());
+        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yy HH:mm:ss", Locale.getDefault());
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         String operatorPhone = preferences.getString(Constants.OPERATOR_PREFERENCE_KEY, "");
         if(!PhoneNumberUtils.isWellFormedSmsAddress(operatorPhone))
@@ -163,17 +155,18 @@ public class RequestCompleteFragment extends DialogFragment implements DialogInt
         switch (status) {
             case COMPLETED: // format: Адрес (берется из входящей смс) / дата закрытия заявки со временем /  "Выполнено"/"Отказ" / комментарий монтажника
                 String done = getString(R.string.done);
-                textForOperator = String.format("%s/%s/%s/%s", mRequest.getAddress(), sdf.format(new Date()), done, done);
+                String doneComment = mCommentEdit.getText().toString();
+                textForOperator = String.format("%s/%s/%s/%s", mRequest.getAddress(), sdf.format(new Date()), done, doneComment);
                 break;
             case DENIED:
                 String denied = getString(R.string.denied);
-                String deniedText = mDeniedCommentEdit.getText().toString();
+                String deniedText = mCommentEdit.getText().toString();
                 textForOperator = String.format("%s/%s/%s/%s", mRequest.getAddress(), sdf.format(new Date()), denied, deniedText);
                 break;
             case MOVED: // format: Адрес (берется из входящей смс) / дата на которую перенесли заявку со временем / "Заявка перенесена" / комментарий монтажника"
                 String moved = getString(R.string.request_moved);
                 String movedToDate = sdf.format(mMovedToDatePicker.getCalendar().getTime());
-                String movedComment = mMovedCommentEdit.getText().toString();
+                String movedComment = mCommentEdit.getText().toString();
                 textForOperator = String.format("%s/%s/%s/%s", mRequest.getAddress(), movedToDate, moved, movedComment);
                 break;
             default: // should not happen

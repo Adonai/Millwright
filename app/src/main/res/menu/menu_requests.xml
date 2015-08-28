@@ -4,9 +4,27 @@
       tools:context=".RequestsActivityFragment"
       tools:ignore="AlwaysShowAction">
     
+    <!-- hide -->  
     <item android:id="@+id/action_add_request"
           android:title="@string/add_request"
           android:titleCondensed="@string/add"
           android:icon="@android:drawable/ic_menu_add"
+          android:visible="false"
           app:showAsAction="always" />
+
+      <item android:id="@+id/notify_on_sms"
+            android:title="@string/notify_on_sms"
+            android:icon="@android:drawable/ic_menu_info_details"
+            app:showAsAction="never"
+            android:checkable="true"
+            android:checked="true"
+            android:orderInCategory="103" />
+
+      <item android:id="@+id/notify_with_sound"
+            android:title="@string/notify_with_sound"
+            android:icon="@android:drawable/ic_menu_info_details"
+            app:showAsAction="never"
+            android:checkable="true"
+            android:checked="false"
+            android:orderInCategory="104" />
 </menu>

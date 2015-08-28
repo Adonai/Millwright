@@ -34,10 +34,6 @@ public class RequestsActivity extends AppCompatActivity {
         // init receivers
         mSentReceiver = new SentConfirmReceiver(this);
         mDeliveryReceiver = new DeliveryConfirmReceiver(this);
-        
-        if(getIntent().hasExtra("number")) {
-            createRequestFromSms(getIntent());
-        }
     }
 
 
@@ -85,36 +81,7 @@ public class RequestsActivity extends AppCompatActivity {
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
 
-        if(intent.hasExtra("number")) {
-            createRequestFromSms(intent);
-        }
-    }
-
-    private void createRequestFromSms(Intent intent) {
-        String smsText = intent.getStringExtra("text");
-        
-        // format: дата заявки / адрес / оплачивает услугу или не оплачивает (либо текст заявки) / № телефона
-        Request toPersist = new Request();
-        String[] elements = smsText.split("/", -1); // include empty ones
-        switch (elements.length) {
-            case 4: // full
-                toPersist.setPhoneNumber(elements[3].trim());
-                // fall through
-            case 3:
-                toPersist.setCustomText(elements[2].trim());
-                // fall through
-            case 2:
-                toPersist.setAddress(elements[1].trim());
-                // fall through
-            case 1:
-                try {
-                    toPersist.setDate(new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).parse(elements[0].trim()));
-                } catch (ParseException e) {
-                    toPersist.setDate(new Date());
-                }
-        }
-        
-        DbProvider.getHelper().getRequestDao().create(toPersist);
+        // we were notified from service, thus we know that new request was created for us, refresh the list
         Fragment requestList = getSupportFragmentManager().findFragmentById(R.id.requests_fragment);
         requestList.getLoaderManager().getLoader(Constants.Loaders.REQUEST_LOADER.ordinal()).onContentChanged();
     }

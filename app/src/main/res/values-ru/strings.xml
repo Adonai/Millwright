@@ -31,4 +31,7 @@
     <string name="main_settings">Основные настройки</string>
     <string name="move_to_date">Перенести на дату</string>
     <string name="invalid_operator_number">Некорректный номер оператора, пожалуйста, исправьте в настройках!</string>
+    <string name="dash">-</string>
+    <string name="notify_on_sms">Открывать при SMS</string>
+    <string name="notify_with_sound">Звук при SMS</string>
 </resources>

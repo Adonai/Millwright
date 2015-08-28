@@ -17,7 +17,7 @@ import java.util.Locale;
  */
 public class DatePickerListener implements View.OnClickListener, View.OnFocusChangeListener {
 
-    public final static SimpleDateFormat VIEW_DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault());
+    public final static SimpleDateFormat VIEW_DATE_FORMAT = new SimpleDateFormat("dd.MM.yy", Locale.getDefault());
     
     private Calendar mSelectedTime = Calendar.getInstance();
     private final EditText mText;

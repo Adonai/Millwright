@@ -70,14 +70,15 @@
                 android:layout_marginEnd="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:id="@+id/phone_number_label"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="@string/phone_number"
-                android:id="@+id/phone_number_label" />
+                android:text="@string/phone_number" />
     
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/phone_number_show_label" />
+                android:id="@+id/phone_number_show_label"
+                android:autoLink="phone" />
         </TableRow>
     
         <TableRow
@@ -122,15 +123,6 @@
                 android:layout_height="wrap_content"
                 android:text="@string/request_denied"/>
     
-            <EditText
-                android:id="@+id/denied_comment_edit"
-                android:gravity="center"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/comment"
-                android:inputType="textMultiLine"
-                android:visibility="gone"/>
-    
             <RadioButton
                 android:id="@+id/request_moved_radio"
                 android:gravity="center"
@@ -146,15 +138,14 @@
                 android:hint="@string/move_to_date"
                 android:inputType="date"
                 android:visibility="gone"/>
-    
+
             <EditText
-                android:id="@+id/move_comment_edit"
+                android:id="@+id/comment_edit"
                 android:gravity="center"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/comment"
-                android:inputType="textCapSentences"
-                android:visibility="gone"/>
+                android:inputType="textMultiLine"/>
             
         </RadioGroup>
     

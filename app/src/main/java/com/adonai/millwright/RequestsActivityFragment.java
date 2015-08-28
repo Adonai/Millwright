@@ -1,5 +1,7 @@
 package com.adonai.millwright;
 
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -30,6 +32,9 @@ import java.util.List;
 public class RequestsActivityFragment extends Fragment {
 
     RecyclerView mRecyclerView;
+    
+    SharedPreferences mPrefs;
+    
     LoaderManager.LoaderCallbacks<RequestAdapter> mLoaderImpl = new RequestsLoader();
 
     public RequestsActivityFragment() {
@@ -39,6 +44,8 @@ public class RequestsActivityFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         setHasOptionsMenu(true);
         View root = inflater.inflate(R.layout.fragment_requests, container, false);
+        
+        mPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
         mRecyclerView = (RecyclerView) root.findViewById(R.id.request_list);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -89,6 +96,32 @@ public class RequestsActivityFragment extends Fragment {
                 RequestCrudFragment requestCreate = RequestCrudFragment.newInstance();
                 requestCreate.show(getFragmentManager(), "reqCreate");
                 return true;
+            case R.id.notify_on_sms: {
+                boolean shouldOpen = mPrefs.getBoolean(Constants.OPEN_ON_SMS_KEY, true);
+                shouldOpen = !shouldOpen;
+
+                // write to prefs
+                SharedPreferences.Editor edit = mPrefs.edit();
+                edit.putBoolean(Constants.OPEN_ON_SMS_KEY, shouldOpen);
+                edit.apply();
+
+                // update menu checked state
+                getActivity().invalidateOptionsMenu();
+                return true;
+            }
+            case R.id.notify_with_sound: {
+                boolean shouldRing = mPrefs.getBoolean(Constants.RING_ON_SMS_KEY, false);
+                shouldRing = !shouldRing;
+
+                // write to prefs
+                SharedPreferences.Editor edit = mPrefs.edit();
+                edit.putBoolean(Constants.RING_ON_SMS_KEY, shouldRing);
+                edit.apply();
+
+                // update menu checked state
+                getActivity().invalidateOptionsMenu();
+                return true;
+            }
             default:
                 return super.onOptionsItemSelected(item);
         }

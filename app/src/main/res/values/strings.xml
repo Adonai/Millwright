@@ -30,4 +30,7 @@
     <string name="done">Done</string>
     <string name="denied">Denied</string>
     <string name="invalid_operator_number">Invalid operator number, please fix in settings!</string>
+    <string name="dash">-</string>
+    <string name="notify_on_sms">Notify on SMS</string>
+    <string name="notify_with_sound">Ring on SMS</string>
 </resources>

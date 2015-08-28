@@ -4,6 +4,7 @@
 
     <PreferenceCategory android:title="@string/main_settings">
         <EditTextPreference 
+            android:inputType="phone"
             android:key="operator.phone.number" 
             android:title="@string/operator_phone_number" 
             android:summary="@string/operator_phone_number_summary" />
