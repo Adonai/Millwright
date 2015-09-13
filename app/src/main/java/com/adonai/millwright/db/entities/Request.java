@@ -32,7 +32,7 @@ public class Request {
         RED
     }
     
-    @DatabaseField(generatedId = true)
+    @DatabaseField(id = true)
     private long id;
 
     @DatabaseField(index = true, dataType = DataType.DATE_LONG)
@@ -81,13 +81,7 @@ public class Request {
             return Urgency.GREEN;
         
         // calculate the diff
-        Calendar forDate = Calendar.getInstance();
-        forDate.setTime(date);
-        
-        int forDayInYear = forDate.get(Calendar.DAY_OF_YEAR);
-        int currentDayInYear = Calendar.getInstance().get(Calendar.DAY_OF_YEAR);
-        
-        int diff = currentDayInYear - forDayInYear;
+        long diff = days(date, new Date());
         if(diff <= 1) {
             return Urgency.GREEN;
         } else if (diff <= 2) {
@@ -120,22 +114,64 @@ public class Request {
         Request tmp = new Request();
         String[] elements = smsText.split("/", -1); // include empty ones
         switch (elements.length) {
-            case 4: // full
-                tmp.setCustomText(elements[3].trim());
+            case 5: // full
+                tmp.setCustomText(elements[4].trim());
+                // fall through
+            case 4:
+                tmp.setPhoneNumber(elements[3].trim());
                 // fall through
             case 3:
-                tmp.setPhoneNumber(elements[2].trim());
+                tmp.setAddress(elements[2].trim());
                 // fall through
             case 2:
-                tmp.setAddress(elements[1].trim());
-                // fall through
-            case 1:
                 try {
-                    tmp.setDate(new SimpleDateFormat("dd.MM.yy", Locale.getDefault()).parse(elements[0].trim()));
+                    tmp.setDate(new SimpleDateFormat("dd.MM.yy", Locale.getDefault()).parse(elements[1].trim()));
                 } catch (ParseException e) {
                     tmp.setDate(new Date());
                 }
+            case 1:
+                try {
+                    tmp.setId(Long.valueOf(elements[0]));
+                } catch (NumberFormatException nfe) {
+                    tmp.setId(0);
+                }
         }
         return tmp;
+    }
+
+    /**
+     * Grabbed from <a href=http://stackoverflow.com/questions/4600034/calculate-number-of-weekdays-between-two-dates-in-java>this SO answer</a>
+     * @param start start date
+     * @param end end date
+     * @return count of workdays between two
+     */
+    static long days(Date start, Date end) {
+        //Ignore argument check
+
+        Calendar c1 = Calendar.getInstance();
+        c1.setTime(start);
+        int w1 = c1.get(Calendar.DAY_OF_WEEK);
+        c1.add(Calendar.DAY_OF_WEEK, -w1);
+
+        Calendar c2 = Calendar.getInstance();
+        c2.setTime(end);
+        int w2 = c2.get(Calendar.DAY_OF_WEEK);
+        c2.add(Calendar.DAY_OF_WEEK, -w2);
+
+        //end Saturday to start Saturday 
+        long days = (c2.getTimeInMillis()-c1.getTimeInMillis())/(1000*60*60*24);
+        long daysWithoutWeekendDays = days-(days*2/7);
+
+        // Adjust w1 or w2 to 0 since we only want a count of *weekdays*
+        // to add onto our daysWithoutWeekendDays
+        if (w1 == Calendar.SUNDAY) {
+            w1 = Calendar.MONDAY;
+        }
+
+        if (w2 == Calendar.SUNDAY) {
+            w2 = Calendar.MONDAY;
+        }
+
+        return daysWithoutWeekendDays-w1+w2;
     }
 }

@@ -33,4 +33,5 @@
     <string name="dash">-</string>
     <string name="notify_on_sms">Notify on SMS</string>
     <string name="notify_with_sound">Ring on SMS</string>
+    <string name="request_already_exists">Request with such ID already exists!</string>
 </resources>

@@ -34,4 +34,5 @@
     <string name="dash">-</string>
     <string name="notify_on_sms">Открывать при SMS</string>
     <string name="notify_with_sound">Звук при SMS</string>
+    <string name="request_already_exists">Заявка с таким номером уже существует!</string>
 </resources>

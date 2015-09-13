@@ -10,8 +10,10 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.telephony.PhoneNumberUtils;
+import android.widget.Toast;
 
 import com.adonai.millwright.Constants;
+import com.adonai.millwright.R;
 import com.adonai.millwright.RequestsActivity;
 import com.adonai.millwright.db.DbProvider;
 import com.adonai.millwright.db.PersistManager;
@@ -74,7 +76,7 @@ public class SMSReceiveService extends Service {
             addRequestEntry(smsText);
             
             if(shouldPlaySound) { // play notify sound
-                mToneGenerator.startTone(ToneGenerator.TONE_CDMA_ABBR_REORDER, 250);
+                mToneGenerator.startTone(ToneGenerator.TONE_CDMA_EMERGENCY_RINGBACK, 250);
             }
             
             if(shouldOpen) { // open activity
@@ -89,7 +91,11 @@ public class SMSReceiveService extends Service {
     public void addRequestEntry(String smsText) {
         PersistManager manager = DbProvider.getTempHelper(this);
         Request toPersist = Request.fromSms(smsText);
-        manager.getRequestDao().create(toPersist);
+        if(manager.getRequestDao().idExists(toPersist.getId())) { // warn
+            Toast.makeText(this, R.string.request_already_exists, Toast.LENGTH_LONG).show();
+        } else { // create
+            manager.getRequestDao().create(toPersist);
+        }
         DbProvider.releaseTempHelper(); // it's ref-counted thus will not close if activity uses it...
     }
 

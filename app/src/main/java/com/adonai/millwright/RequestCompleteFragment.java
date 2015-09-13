@@ -29,6 +29,7 @@ import com.adonai.millwright.ui.DatePickerListener;
 import org.w3c.dom.Text;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.InvalidPropertiesFormatException;
 import java.util.Locale;
@@ -147,32 +148,43 @@ public class RequestCompleteFragment extends DialogFragment implements DialogInt
         if(!PhoneNumberUtils.isWellFormedSmsAddress(operatorPhone))
             throw new InvalidPropertiesFormatException("Invalid operator phone number!");
         
-        PendingIntent sentPI = PendingIntent.getBroadcast(getActivity(), 0, new Intent(Constants.SENT), 0);
-        PendingIntent deliveredPI = PendingIntent.getBroadcast(getActivity(), 0, new Intent(Constants.DELIVERED), 0);
-        
-        SmsManager sms = SmsManager.getDefault();
         String textForOperator;
         switch (status) {
             case COMPLETED: // format: Адрес (берется из входящей смс) / дата закрытия заявки со временем /  "Выполнено"/"Отказ" / комментарий монтажника
                 String done = getString(R.string.done);
                 String doneComment = mCommentEdit.getText().toString();
-                textForOperator = String.format("%s/%s/%s/%s", mRequest.getAddress(), sdf.format(new Date()), done, doneComment);
+                textForOperator = String.format("%d/%s/%s/%s/%s", mRequest.getId(), mRequest.getAddress(), sdf.format(new Date()), done, doneComment);
                 break;
             case DENIED:
                 String denied = getString(R.string.denied);
                 String deniedText = mCommentEdit.getText().toString();
-                textForOperator = String.format("%s/%s/%s/%s", mRequest.getAddress(), sdf.format(new Date()), denied, deniedText);
+                textForOperator = String.format("%d/%s/%s/%s/%s", mRequest.getId(), mRequest.getAddress(), sdf.format(new Date()), denied, deniedText);
                 break;
             case MOVED: // format: Адрес (берется из входящей смс) / дата на которую перенесли заявку со временем / "Заявка перенесена" / комментарий монтажника"
                 String moved = getString(R.string.request_moved);
                 String movedToDate = sdf.format(mMovedToDatePicker.getCalendar().getTime());
                 String movedComment = mCommentEdit.getText().toString();
-                textForOperator = String.format("%s/%s/%s/%s", mRequest.getAddress(), movedToDate, moved, movedComment);
+                textForOperator = String.format("%d/%s/%s/%s/%s", mRequest.getId(), mRequest.getAddress(), movedToDate, moved, movedComment);
                 break;
             default: // should not happen
                 textForOperator = "";
+                break;
         }
-        sms.sendTextMessage(operatorPhone, null, textForOperator, sentPI, deliveredPI);
+        sendSms(operatorPhone, textForOperator);
+    }
+
+    private void sendSms(String phone, String text) {
+        PendingIntent sentPI = PendingIntent.getBroadcast(getActivity(), 0, new Intent(Constants.SENT), 0);
+        PendingIntent deliveredPI = PendingIntent.getBroadcast(getActivity(), 0, new Intent(Constants.DELIVERED), 0);
+        SmsManager sms = SmsManager.getDefault();
+        ArrayList<String> splitArray = sms.divideMessage(text);
+        ArrayList<PendingIntent> sendIntents = new ArrayList<>(splitArray.size());
+        ArrayList<PendingIntent> deliverIntents = new ArrayList<>(splitArray.size());
+        for(int partIndex = 0; partIndex < splitArray.size(); ++partIndex) {
+            sendIntents.add(sentPI);
+            deliverIntents.add(deliveredPI);
+        }
+        sms.sendMultipartTextMessage(phone, null, splitArray, sendIntents, deliverIntents);
     }
 
     private void updateRequestDate() {
